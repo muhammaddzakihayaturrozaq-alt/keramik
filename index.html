@@ -23,7 +23,11 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Non-blocking font load untuk kurangi render-blocking -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+  <!-- Preload LCP image -->
+  <link rel="preload" as="image" href="https://res.cloudinary.com/denrtx3a9/image/upload/f_auto,q_auto,w_1200/krmk_wzex2d.png" fetchpriority="high" />
 
   <!-- Schema LocalBusiness -->
   <script type="application/ld+json">
@@ -319,6 +323,7 @@
       background: white; border-radius: 16px;
       border: 1.5px solid var(--gray-light);
       padding: 28px 24px; transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+      will-change: transform;
     }
     .layanan-card:hover {
       box-shadow: var(--shadow-md); border-color: var(--red);
@@ -523,6 +528,7 @@
     /* Make area cards clickable */
     .area-card {
       cursor: pointer; transition: box-shadow 0.2s, transform 0.2s;
+      will-change: transform;
     }
     .area-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
     .area-card-link {
@@ -532,7 +538,7 @@
     .area-card-link svg { width: 14px; height: 14px; fill: var(--red); }
 
     /* ===================== GALERI ===================== */
-    #galeri { background: var(--white); }
+    #galeri { background: var(--white); content-visibility: auto; contain-intrinsic-size: 0 600px; }
     .galeri-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -564,7 +570,7 @@
     .galeri-overlay span { color: white; font-weight: 700; font-size: 0.9rem; }
 
     /* ===================== TESTIMONI ===================== */
-    #testimoni { background: var(--off-white); }
+    #testimoni { background: var(--off-white); content-visibility: auto; contain-intrinsic-size: 0 500px; }
     .testi-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
     }
@@ -796,18 +802,18 @@
         <div class="hero-img-grid">
           <div class="hero-img-card">
             <img src="https://res.cloudinary.com/denrtx3a9/image/upload/f_auto,q_auto,w_1200/krmk_wzex2d.png" 
-     alt="hasil pasang keramik lantai rapi jakarta" loading="lazy">
+     alt="hasil pasang keramik lantai rapi jakarta" fetchpriority="high" decoding="async">
               <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
               Foto Proyek Keramik Lantai
             </div>
           </div>
           <div class="hero-img-card">
             <img src="https://res.cloudinary.com/denrtx3a9/image/upload/f_auto,q_auto,w_800/keramik_re9e0v.png" 
-     alt="keramik dinding rapi jabodetabek" loading="lazy">
+     alt="keramik dinding rapi jabodetabek" loading="lazy" decoding="async" width="400" height="400">
           </div>
           <div class="hero-img-card">
             <img src="https://res.cloudinary.com/denrtx3a9/image/upload/f_auto,q_auto,w_800/Whisk_cc1057ecb7a6654976a4ee590fd852c0dr_jg2hxj.jpg" 
-     alt="hasil renovasi keramik profesional" loading="lazy">
+     alt="hasil renovasi keramik profesional" loading="lazy" decoding="async" width="400" height="400">
           </div>
         </div>
         <div class="hero-float-badge">
@@ -831,7 +837,7 @@
       <div class="tentang-img">
         <div class="tentang-img-main">
           <img src="https://res.cloudinary.com/denrtx3a9/image/upload/f_auto,q_auto,w_1000/Whisk_45ff2e744599990bb73401a14db5a9aadr_uln4nx.jpg" 
-     alt="tim tukang keramik profesional bekerja" loading="lazy">
+     alt="tim tukang keramik profesional bekerja" loading="lazy" decoding="async" width="500" height="375">
             <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
           </div>
         </div>
@@ -1400,6 +1406,7 @@
 </div>
 
 <script>
+  // Defer non-critical interactions using event delegation
   function toggleMenu() {
     const menu = document.getElementById('mobileMenu');
     menu.classList.toggle('open');
@@ -1407,11 +1414,11 @@
   function closeMenu() {
     document.getElementById('mobileMenu').classList.remove('open');
   }
-  // Close menu on outside click
+  // Passive listener untuk close menu - tidak blokir scroll
   document.addEventListener('click', function(e) {
     const header = document.querySelector('header');
     if (!header.contains(e.target)) closeMenu();
-  });
+  }, { passive: true });
 </script>
   
 <section style="display:none;">
@@ -1512,8 +1519,7 @@
   </div>
 </div>
 
-<script>
-// ==================== AREA DATA ====================
+<script defer>
 const AREA_DATA = {
   'jakarta-barat': {
     name: 'Jakarta Barat',
@@ -1662,7 +1668,7 @@ function showAreaPage(slug) {
   const faqEl = document.getElementById('areaFaq');
   faqEl.innerHTML = '<h3>Pertanyaan Umum (FAQ)</h3>' + data.faq.map((f,i) => `
     <div class="faq-item" id="faq-${slug}-${i}">
-      <div class="faq-q" onclick="toggleFaq('faq-${slug}-${i}')">
+      <div class="faq-q" data-faq-id="faq-${slug}-${i}">
         ${f.q}
         <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
       </div>
@@ -1777,7 +1783,7 @@ window.addEventListener('popstate', function(e) {
       document.title = DEFAULT_TITLE;
     }
   }
-});
+}, { passive: true });
 
 // On load check hash
 window.addEventListener('DOMContentLoaded', function() {
@@ -1788,15 +1794,39 @@ window.addEventListener('DOMContentLoaded', function() {
       showAreaPage(slug);
     }
   }
-});
+}, { passive: true });
 
-// Allow keyboard access on area cards
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const page = document.getElementById('areaPage');
-    if (page && page.classList.contains('active')) closeAreaPage();
+// Allow keyboard access on area cards - defer to idle time
+const _initKeyboard = () => {
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const page = document.getElementById('areaPage');
+      if (page && page.classList.contains('active')) closeAreaPage();
+    }
+  });
+};
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(_initKeyboard, { timeout: 2000 });
+} else {
+  setTimeout(_initKeyboard, 500);
+}
+
+// Use event delegation for area cards instead of inline onclick
+document.addEventListener('click', function(e) {
+  // Area card click
+  const areaCard = e.target.closest('[data-area-slug]');
+  if (areaCard) {
+    e.preventDefault();
+    showAreaPage(areaCard.dataset.areaSlug);
+    return;
   }
-});
+  // FAQ toggle via delegation
+  const faqQ = e.target.closest('.faq-q[data-faq-id]');
+  if (faqQ) {
+    toggleFaq(faqQ.dataset.faqId);
+    return;
+  }
+}, { passive: false });
 </script>
 
 </body>
